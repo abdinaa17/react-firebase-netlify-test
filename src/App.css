@@ -1,0 +1,60 @@
+.container {
+  width: 90vw;
+  margin: 0 auto;
+}
+.alert {
+  background: rgb(238, 156, 156);
+  color: black;
+  padding: 10px 5px;
+  border-radius: 5px;
+  width: 250px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.card {
+  background-color: #4caf50;
+  color: white;
+  margin: 30px auto;
+  width: 300px;
+  height: 300px;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: 5px 5px 30px 7px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: 0.4s;
+  overflow: hidden;
+}
+.card img {
+  display: block;
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+}
+input[type="text"],
+select,
+input[type="file"],
+input[type="checkbox"] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+button[type="submit"] {
+  width: 100%;
+  background-color: #4caf50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #45a049;
+}
