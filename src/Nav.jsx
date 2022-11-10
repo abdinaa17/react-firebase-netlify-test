@@ -29,6 +29,9 @@ const Nav = () => {
       <Link to="/">
         <h2>LISTERS</h2>
       </Link>
+      <Link to="/create-listing">
+        <h2>Create listing</h2>
+      </Link>
       {currentUser ? (
         <button style={{ cursor: "pointer" }} onClick={handleLogout}>
           Log out
