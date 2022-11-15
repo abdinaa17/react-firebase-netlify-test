@@ -1,31 +1,40 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "./context";
+import { useState, useEffect } from "react";
+import { useAuth } from "../context";
 import { useNavigate } from "react-router-dom";
-const Login = () => {
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
+const Register = () => {
+  const { currentUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
-  const handleLogin = async (e) => {
+
+  const handleRegister = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!email || !password || !confirmPassword) {
       setError("All fields are required");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
       return;
     }
     try {
       setLoading(true);
       setError("");
-      await loginUser(email, password);
-      navigate("/");
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigate("/login");
     } catch (err) {
       const errorMessage = err.code.split("/")[1];
       setError(errorMessage);
     }
     setLoading(false);
   };
+
   return (
     <div
       style={{
@@ -40,7 +49,7 @@ const Login = () => {
           display: "flex",
           flexDirection: "column",
         }}
-        onSubmit={handleLogin}
+        onSubmit={handleRegister}
       >
         <input
           style={{ margin: ".5rem 0", width: "250px" }}
@@ -60,11 +69,21 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           autoComplete="off"
         />
+        <input
+          type="password"
+          name=""
+          id="confirmPassword"
+          style={{ margin: ".5rem 0", width: "250px" }}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          autoComplete="off"
+        />
         <button
           style={{ margin: ".5rem 0", width: "250px", cursor: "pointer" }}
           type="submit"
+          disabled={loading}
         >
-          Log In
+          Register
         </button>
       </form>
       <div
@@ -73,12 +92,11 @@ const Login = () => {
         }}
       >
         <p>
-          Don't have an account? <Link to="/register">Register Here</Link>
+          Already have an account? <Link to="/login">Login here</Link>
         </p>
-        {/* {hello} */}
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;

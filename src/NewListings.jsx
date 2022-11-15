@@ -12,7 +12,9 @@ import { serverTimestamp, collection, addDoc } from "firebase/firestore";
 const storage = getStorage();
 import { db } from "./firebase";
 import spinner from "./spinner.svg";
+import { useAuth } from "./context";
 const NewListings = () => {
+  const { currentUser } = useAuth();
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [listing, setListing] = useState({
@@ -45,19 +47,21 @@ const NewListings = () => {
       }));
     }
   };
+
+  // Form submission starts
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    if (
-      !listing.title ||
-      !listing.tagline ||
-      !listing.desc ||
-      !listing.images
-    ) {
+    if (!listing.title || !listing.tagline || !listing.desc) {
       setError(true);
       return;
     }
-
+    setLoading(true);
+    // if (!currentUser) {
+    //   setLoading(false);
+    //   navigate("/login");
+    //   return;
+    // }
     // We'll upload the images to firebase storage and then extract the urls and push it to our db.
 
     const storeImg = async (img) => {
@@ -68,27 +72,12 @@ const NewListings = () => {
         uploadTask.on(
           "state_changed",
           (snapshot) => {
-            // Observe state change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log("Upload is " + progress + "% done");
-            switch (snapshot.state) {
-              case "paused":
-                console.log("Upload is paused");
-                break;
-              case "running":
-                console.log("Upload is running");
-                break;
-            }
+            return snapshot;
           },
           (err) => {
-            // Handle unsuccessful uploads
             reject(err);
           },
           () => {
-            // Handle successful uploads on complete
-            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
               resolve(downloadURL);
             });
@@ -96,6 +85,9 @@ const NewListings = () => {
         );
       });
     };
+    if (!listing.images) {
+      return {};
+    }
     const imgUrls = await Promise.all(
       [...listing.images].map((img) => storeImg(img))
     ).catch((err) => {
@@ -110,6 +102,7 @@ const NewListings = () => {
       timestamp: serverTimestamp(),
     };
     delete newListing.images;
+    console.log(newListing);
     const docRef = await addDoc(collection(db, "listings"), newListing);
     setLoading(false);
     navigate("/");
@@ -128,6 +121,7 @@ const NewListings = () => {
   }
   return (
     <div className="container">
+      {currentUser && currentUser.email}
       <form onSubmit={handleSubmit}>
         <input
           type="text"

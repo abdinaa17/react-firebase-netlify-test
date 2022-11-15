@@ -7,7 +7,6 @@ import Login from "./Login";
 // import "react-toastify/dist/ReactToastify.css";
 import Register from "./Register";
 import NewListings from "./NewListings";
-import Form from "./Form";
 function App() {
   return (
     <div>
@@ -15,7 +14,6 @@ function App() {
         <Nav />
         <Routes>
           <Route path="/" element={<Listings />} />
-          <Route path="form" element={<Form />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="create-listing" element={<NewListings />} />

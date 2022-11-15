@@ -4,9 +4,9 @@ import App from "./App";
 import { AuthProvider } from "./context";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  </React.StrictMode>
+  <AuthProvider>
+    {/* <ListingsProvider> */}
+    <App />
+    {/* </ListingsProvider> */}
+  </AuthProvider>
 );

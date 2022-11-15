@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "./context";
-
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "./firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 const Nav = () => {
-  const { currentUser, logoutUser } = useAuth();
+  const [user] = useAuthState(auth);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   // Log out user function
   const handleLogout = async () => {
     setError("");
     try {
-      await logoutUser();
+      await auth.signOut();
+
       navigate("/login");
     } catch (err) {
       const errorMessage = err.code;
@@ -32,7 +34,7 @@ const Nav = () => {
       <Link to="/create-listing">
         <h2>Create listing</h2>
       </Link>
-      {currentUser ? (
+      {user ? (
         <button style={{ cursor: "pointer" }} onClick={handleLogout}>
           Log out
         </button>

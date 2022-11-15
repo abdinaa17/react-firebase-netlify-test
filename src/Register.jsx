@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useAuth } from "./context";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import spinner from "./spinner.svg";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { db, auth } from "./firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const Register = () => {
-  const { registerUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -25,15 +27,26 @@ const Register = () => {
     try {
       setLoading(true);
       setError("");
-      await registerUser(email, password);
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredentials.user;
+      const newUser = {
+        email,
+        timestamp: serverTimestamp(),
+      };
+      await setDoc(doc(db, "users", user.uid), newUser);
       navigate("/login");
     } catch (err) {
-      const errorMessage = err.code.split("/")[1];
-      setError(errorMessage);
+      setError(err);
     }
     setLoading(false);
   };
-
+  if (loading) {
+    return <img src={spinner} alt="" />;
+  }
   return (
     <div
       style={{
